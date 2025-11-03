@@ -1,0 +1,45 @@
+[
+  {
+    "type": "function",
+    "name": "verifyKYC",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "user", "type": "address"},
+      {"name": "kycHash", "type": "bytes32"},
+      {"name": "level", "type": "uint8"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "checkCompliance",
+    "stateMutability": "view",
+    "inputs": [{"name": "user", "type": "address"}],
+    "outputs": [
+      {"name": "isCompliant", "type": "bool"},
+      {"name": "level", "type": "uint8"}
+    ]
+  },
+  {
+    "type": "function",
+    "name": "addToWhitelist",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "user", "type": "address"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "removeFromWhitelist",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "user", "type": "address"}],
+    "outputs": []
+  },
+  {
+    "type": "event",
+    "name": "KYCVerified",
+    "inputs": [
+      {"name": "user", "type": "address", "indexed": true},
+      {"name": "level", "type": "uint8", "indexed": false}
+    ]
+  }
+]

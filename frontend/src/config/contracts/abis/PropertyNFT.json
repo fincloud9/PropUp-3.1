@@ -1,0 +1,83 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {"name": "_name", "type": "string"},
+      {"name": "_symbol", "type": "string"}
+    ]
+  },
+  {
+    "type": "function",
+    "name": "mint",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "to", "type": "address"},
+      {"name": "tokenId", "type": "uint256"},
+      {"name": "metadataURI", "type": "string"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "transferFrom",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "from", "type": "address"},
+      {"name": "to", "type": "address"},
+      {"name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "ownerOf",
+    "stateMutability": "view",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "owner", "type": "address"}]
+  },
+  {
+    "type": "function",
+    "name": "tokenURI",
+    "stateMutability": "view",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "uri", "type": "string"}]
+  },
+  {
+    "type": "function",
+    "name": "approve",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "to", "type": "address"},
+      {"name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "setApprovalForAll",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "operator", "type": "address"},
+      {"name": "approved", "type": "bool"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "event",
+    "name": "Transfer",
+    "inputs": [
+      {"name": "from", "type": "address", "indexed": true},
+      {"name": "to", "type": "address", "indexed": true},
+      {"name": "tokenId", "type": "uint256", "indexed": true}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "Approval",
+    "inputs": [
+      {"name": "owner", "type": "address", "indexed": true},
+      {"name": "approved", "type": "address", "indexed": true},
+      {"name": "tokenId", "type": "uint256", "indexed": true}
+    ]
+  }
+]

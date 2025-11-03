@@ -1,0 +1,53 @@
+[
+  {
+    "type": "function",
+    "name": "registerProperty",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "nftContract", "type": "address"},
+      {"name": "tokenId", "type": "uint256"},
+      {"name": "metadataURI", "type": "string"},
+      {"name": "propertyType", "type": "uint8"}
+    ],
+    "outputs": [{"name": "propertyId", "type": "bytes32"}]
+  },
+  {
+    "type": "function",
+    "name": "updateProperty",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "propertyId", "type": "bytes32"},
+      {"name": "metadataURI", "type": "string"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getProperty",
+    "stateMutability": "view",
+    "inputs": [{"name": "propertyId", "type": "bytes32"}],
+    "outputs": [
+      {
+        "name": "property",
+        "type": "tuple",
+        "components": [
+          {"name": "nftContract", "type": "address"},
+          {"name": "tokenId", "type": "uint256"},
+          {"name": "owner", "type": "address"},
+          {"name": "metadataURI", "type": "string"},
+          {"name": "propertyType", "type": "uint8"},
+          {"name": "isActive", "type": "bool"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "PropertyRegistered",
+    "inputs": [
+      {"name": "propertyId", "type": "bytes32", "indexed": true},
+      {"name": "owner", "type": "address", "indexed": true},
+      {"name": "nftContract", "type": "address", "indexed": false}
+    ]
+  }
+]
