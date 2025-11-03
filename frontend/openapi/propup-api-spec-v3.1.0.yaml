@@ -1,0 +1,1617 @@
+openapi: 3.1.0
+info:
+  title: PropUp API Specification
+  description: |
+    Comprehensive API specification for PropUp - Decentralized Property Listing & Transaction Platform
+    
+    This specification covers all 15 service layers defined in PRD v3.1.0:
+    1. Authentication & Authorization
+    2. User Management & KYC
+    3. Property Registry
+    4. Property Tokenization
+    5. Marketplace (Buy/Sell)
+    6. Rental Management
+    7. Crowdfunding
+    8. DeFi Services (Lending/Staking)
+    9. Governance (DAO)
+    10. Treasury Management
+    11. Compliance & Legal
+    12. AI Services
+    13. Analytics & Reporting
+    14. White-label Configuration
+    15. Notification & Communication
+    
+    **Blockchain Integration:** Smart contracts deployed on Polygon network
+    **Authentication:** JWT-based with Web3 wallet signature verification
+    **Rate Limiting:** 100 requests/minute per user
+  version: 3.1.0
+  contact:
+    name: PropUp API Support
+    email: api@propup.io
+  license:
+    name: Proprietary
+    
+servers:
+  - url: https://api.propup.io/v1
+    description: Production server
+  - url: https://staging-api.propup.io/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+  - WalletSignature: []
+
+tags:
+  - name: Authentication
+    description: Authentication and wallet connection endpoints
+  - name: Users
+    description: User management and profile operations
+  - name: KYC
+    description: KYC/AML compliance verification
+  - name: Properties
+    description: Property listing and management
+  - name: Tokenization
+    description: Property tokenization and fractional ownership
+  - name: Marketplace
+    description: Buy/sell property tokens
+  - name: Rentals
+    description: Rental agreements and management
+  - name: Crowdfunding
+    description: Real estate crowdfunding campaigns
+  - name: DeFi
+    description: Lending, borrowing, and staking services
+  - name: Governance
+    description: DAO governance and voting
+  - name: Treasury
+    description: Platform treasury management
+  - name: Compliance
+    description: Legal compliance and title registry
+  - name: AI
+    description: AI-powered services (chatbot, recommendations, valuations)
+  - name: Analytics
+    description: Platform analytics and KPIs
+  - name: White-label
+    description: White-label portal configuration
+  - name: Notifications
+    description: Notification and communication services
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    WalletSignature:
+      type: apiKey
+      in: header
+      name: X-Wallet-Signature
+      
+  schemas:
+    # =========================================================================
+    # Authentication & User Models
+    # =========================================================================
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        wallet_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        role:
+          type: string
+          enum: [investor, agent, manager, lawyer, developer, tenant, admin]
+        kyc_status:
+          type: string
+          enum: [unverified, pending, verified, rejected]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        profile:
+          $ref: '#/components/schemas/UserProfile'
+          
+    UserProfile:
+      type: object
+      properties:
+        full_name:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+        bio:
+          type: string
+        phone:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        preferences:
+          type: object
+          
+    WalletConnectionRequest:
+      type: object
+      required:
+        - wallet_address
+        - signature
+        - message
+      properties:
+        wallet_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        signature:
+          type: string
+        message:
+          type: string
+        chain_id:
+          type: integer
+          default: 137
+          
+    AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          default: Bearer
+        expires_in:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+          
+    # =========================================================================
+    # KYC Models
+    # =========================================================================
+    KYCVerification:
+      type: object
+      properties:
+        kyc_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        provider:
+          type: string
+          enum: [sumsub, onfido]
+        status:
+          type: string
+          enum: [pending, approved, rejected, expired]
+        level:
+          type: string
+          enum: [basic, advanced, institutional]
+        submitted_at:
+          type: string
+          format: date-time
+        verified_at:
+          type: string
+          format: date-time
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/KYCDocument'
+        verification_url:
+          type: string
+          format: uri
+          
+    KYCDocument:
+      type: object
+      properties:
+        document_type:
+          type: string
+          enum: [passport, drivers_license, national_id, proof_of_address]
+        document_number:
+          type: string
+        issue_date:
+          type: string
+          format: date
+        expiry_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+          
+    # =========================================================================
+    # Property Models
+    # =========================================================================
+    Property:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        nft_contract_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        token_id:
+          type: string
+        owner_wallet_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        listing_type:
+          type: string
+          enum: [sale, rent, both, crowdfunding]
+        status:
+          type: string
+          enum: [draft, listed, sold, rented, delisted, under_construction]
+        details:
+          $ref: '#/components/schemas/PropertyDetails'
+        tokenization:
+          $ref: '#/components/schemas/TokenizationInfo'
+        valuation:
+          $ref: '#/components/schemas/PropertyValuation'
+        location:
+          $ref: '#/components/schemas/PropertyLocation'
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyMedia'
+        created_at:
+          type: string
+          format: date-time
+        listed_at:
+          type: string
+          format: date-time
+        metadata_uri:
+          type: string
+          
+    PropertyDetails:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        property_type:
+          type: string
+          enum: [residential, commercial, industrial, land, mixed_use]
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: number
+          format: float
+        area_sqft:
+          type: integer
+        year_built:
+          type: integer
+        parking_spaces:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+        features:
+          type: array
+          items:
+            type: string
+            
+    PropertyLocation:
+      type: object
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip_code:
+          type: string
+        country:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        neighborhood:
+          type: string
+          
+    PropertyMedia:
+      type: object
+      properties:
+        media_id:
+          type: string
+        type:
+          type: string
+          enum: [image, video, tour_3d, document]
+        url:
+          type: string
+          format: uri
+        ipfs_hash:
+          type: string
+        caption:
+          type: string
+        order:
+          type: integer
+          
+    PropertyValuation:
+      type: object
+      properties:
+        current_value:
+          type: number
+          format: double
+        ai_estimated_value:
+          type: number
+          format: double
+        confidence_interval:
+          type: object
+          properties:
+            lower_bound:
+              type: number
+            upper_bound:
+              type: number
+        last_updated:
+          type: string
+          format: date-time
+        valuation_source:
+          type: string
+          enum: [ai_model, manual_appraisal, market_data]
+          
+    TokenizationInfo:
+      type: object
+      properties:
+        is_tokenized:
+          type: boolean
+        token_standard:
+          type: string
+          enum: [ERC721, ERC1155, ERC20]
+        total_supply:
+          type: string
+        available_tokens:
+          type: string
+        token_price:
+          type: number
+          format: double
+        min_investment:
+          type: number
+          format: double
+        is_fractional:
+          type: boolean
+          
+    # =========================================================================
+    # Marketplace Models
+    # =========================================================================
+    MarketplaceListing:
+      type: object
+      properties:
+        listing_id:
+          type: string
+          format: uuid
+        property_id:
+          type: string
+          format: uuid
+        seller_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        listing_type:
+          type: string
+          enum: [direct_sale, auction, offer]
+        price:
+          type: number
+          format: double
+        currency:
+          type: string
+          enum: [USD, ETH, MATIC, USDC]
+        status:
+          type: string
+          enum: [active, sold, cancelled, expired]
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          
+    Transaction:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+        transaction_hash:
+          type: string
+        type:
+          type: string
+          enum: [sale, rental_payment, investment, reward_claim, governance_vote]
+        from_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        to_address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        value:
+          type: string
+        gas_used:
+          type: string
+        status:
+          type: string
+          enum: [pending, success, failed]
+        timestamp:
+          type: string
+          format: date-time
+        block_number:
+          type: integer
+        
+    # =========================================================================
+    # Rental Models
+    # =========================================================================
+    RentalAgreement:
+      type: object
+      properties:
+        agreement_id:
+          type: string
+          format: uuid
+        property_id:
+          type: string
+          format: uuid
+        landlord_address:
+          type: string
+        tenant_address:
+          type: string
+        lease_start_date:
+          type: string
+          format: date
+        lease_end_date:
+          type: string
+          format: date
+        monthly_rent:
+          type: number
+          format: double
+        security_deposit:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [draft, active, terminated, expired, disputed]
+        agreement_hash:
+          type: string
+        smart_contract_address:
+          type: string
+        payment_schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentPayment'
+            
+    RentPayment:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+        due_date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [pending, paid, late, disputed]
+        paid_at:
+          type: string
+          format: date-time
+        transaction_hash:
+          type: string
+          
+    # =========================================================================
+    # Crowdfunding Models
+    # =========================================================================
+    CrowdfundingCampaign:
+      type: object
+      properties:
+        campaign_id:
+          type: string
+          format: uuid
+        property_id:
+          type: string
+          format: uuid
+        developer_address:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        goal_amount:
+          type: number
+          format: double
+        raised_amount:
+          type: number
+          format: double
+        min_investment:
+          type: number
+          format: double
+        token_price:
+          type: number
+          format: double
+        total_tokens:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [draft, active, funded, cancelled, completed]
+        milestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectMilestone'
+            
+    ProjectMilestone:
+      type: object
+      properties:
+        milestone_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        target_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [pending, in_progress, completed, delayed]
+        completion_percentage:
+          type: integer
+          
+    # =========================================================================
+    # DeFi Models
+    # =========================================================================
+    LendingPool:
+      type: object
+      properties:
+        pool_id:
+          type: string
+        name:
+          type: string
+        asset:
+          type: string
+        total_supplied:
+          type: string
+        total_borrowed:
+          type: string
+        supply_apy:
+          type: number
+          format: double
+        borrow_apy:
+          type: number
+          format: double
+        utilization_rate:
+          type: number
+          format: double
+          
+    StakingPosition:
+      type: object
+      properties:
+        position_id:
+          type: string
+          format: uuid
+        user_address:
+          type: string
+        staked_amount:
+          type: string
+        reward_earned:
+          type: string
+        apy:
+          type: number
+          format: double
+        staked_at:
+          type: string
+          format: date-time
+        unlock_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, unstaking, completed]
+          
+    # =========================================================================
+    # Governance Models
+    # =========================================================================
+    GovernanceProposal:
+      type: object
+      properties:
+        proposal_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        proposer_address:
+          type: string
+        proposal_type:
+          type: string
+          enum: [parameter_change, contract_upgrade, treasury_allocation, ai_model_deployment]
+        status:
+          type: string
+          enum: [draft, active, succeeded, defeated, executed, cancelled]
+        voting_starts:
+          type: string
+          format: date-time
+        voting_ends:
+          type: string
+          format: date-time
+        votes_for:
+          type: string
+        votes_against:
+          type: string
+        votes_abstain:
+          type: string
+        quorum_reached:
+          type: boolean
+        execution_eta:
+          type: string
+          format: date-time
+          
+    # =========================================================================
+    # AI Service Models
+    # =========================================================================
+    AIChatMessage:
+      type: object
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          
+    PropertyRecommendation:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        score:
+          type: number
+          format: double
+        reasons:
+          type: array
+          items:
+            type: string
+        personalization_factors:
+          type: array
+          items:
+            type: string
+            
+    AIValuationRequest:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        comparable_properties:
+          type: array
+          items:
+            type: string
+        market_data:
+          type: object
+          
+    AIValuationResponse:
+      type: object
+      properties:
+        estimated_value:
+          type: number
+          format: double
+        confidence_score:
+          type: number
+          format: double
+        confidence_interval:
+          type: object
+          properties:
+            lower_bound:
+              type: number
+            upper_bound:
+              type: number
+        valuation_factors:
+          type: array
+          items:
+            type: object
+        comparable_analysis:
+          type: object
+          
+    # =========================================================================
+    # Analytics Models
+    # =========================================================================
+    PlatformMetrics:
+      type: object
+      properties:
+        total_properties:
+          type: integer
+        total_transactions:
+          type: integer
+        total_volume:
+          type: number
+          format: double
+        active_users:
+          type: integer
+        tvl:
+          type: number
+          format: double
+        apy_average:
+          type: number
+          format: double
+          
+    # =========================================================================
+    # Error Response
+    # =========================================================================
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+            timestamp:
+              type: string
+              format: date-time
+
+paths:
+  # ===========================================================================
+  # AUTHENTICATION ENDPOINTS
+  # ===========================================================================
+  /auth/wallet/connect:
+    post:
+      tags: [Authentication]
+      summary: Connect wallet and authenticate
+      description: Authenticate user using wallet signature
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletConnectionRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /auth/wallet/disconnect:
+    post:
+      tags: [Authentication]
+      summary: Disconnect wallet
+      responses:
+        '200':
+          description: Disconnected successfully
+          
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+                
+  /auth/nonce:
+    get:
+      tags: [Authentication]
+      summary: Get nonce for wallet signature
+      security: []
+      parameters:
+        - name: wallet_address
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nonce generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nonce:
+                    type: string
+                  message:
+                    type: string
+                    
+  # ===========================================================================
+  # USER MANAGEMENT ENDPOINTS
+  # ===========================================================================
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+                
+    put:
+      tags: [Users]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+                
+  /users/{user_id}:
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+                
+  /users/{user_id}/portfolio:
+    get:
+      tags: [Users]
+      summary: Get user portfolio
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User portfolio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  properties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Property'
+                  investments:
+                    type: array
+                  total_value:
+                    type: number
+                    
+  # ===========================================================================
+  # KYC ENDPOINTS
+  # ===========================================================================
+  /kyc/initiate:
+    post:
+      tags: [KYC]
+      summary: Initiate KYC verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  enum: [sumsub, onfido]
+                level:
+                  type: string
+                  enum: [basic, advanced, institutional]
+      responses:
+        '200':
+          description: KYC verification initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCVerification'
+                
+  /kyc/status:
+    get:
+      tags: [KYC]
+      summary: Get KYC verification status
+      responses:
+        '200':
+          description: KYC status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCVerification'
+                
+  /kyc/webhook:
+    post:
+      tags: [KYC]
+      summary: KYC provider webhook
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+          
+  # ===========================================================================
+  # PROPERTY ENDPOINTS
+  # ===========================================================================
+  /properties:
+    get:
+      tags: [Properties]
+      summary: List properties
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 12
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: min_price
+          in: query
+          schema:
+            type: number
+        - name: max_price
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: List of properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  properties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Property'
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      pages:
+                        type: integer
+                        
+    post:
+      tags: [Properties]
+      summary: Create new property listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Property'
+      responses:
+        '201':
+          description: Property created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+                
+  /properties/{property_id}:
+    get:
+      tags: [Properties]
+      summary: Get property details
+      parameters:
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Property details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+                
+    put:
+      tags: [Properties]
+      summary: Update property
+      parameters:
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Property'
+      responses:
+        '200':
+          description: Property updated
+          
+    delete:
+      tags: [Properties]
+      summary: Delete property
+      parameters:
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Property deleted
+          
+  /properties/search:
+    post:
+      tags: [Properties]
+      summary: Advanced property search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                filters:
+                  type: object
+                sort_by:
+                  type: string
+                location:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                    lng:
+                      type: number
+                    radius:
+                      type: number
+      responses:
+        '200':
+          description: Search results
+          
+  # ===========================================================================
+  # TOKENIZATION ENDPOINTS
+  # ===========================================================================
+  /tokenization/create:
+    post:
+      tags: [Tokenization]
+      summary: Tokenize a property
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                property_id:
+                  type: string
+                token_standard:
+                  type: string
+                  enum: [ERC721, ERC1155]
+                total_supply:
+                  type: string
+                fractional:
+                  type: boolean
+      responses:
+        '201':
+          description: Property tokenized
+          
+  /tokenization/{property_id}/metadata:
+    get:
+      tags: [Tokenization]
+      summary: Get NFT metadata
+      parameters:
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NFT metadata
+          
+  # ===========================================================================
+  # MARKETPLACE ENDPOINTS
+  # ===========================================================================
+  /marketplace/listings:
+    get:
+      tags: [Marketplace]
+      summary: Get marketplace listings
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Marketplace listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketplaceListing'
+                      
+    post:
+      tags: [Marketplace]
+      summary: Create marketplace listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarketplaceListing'
+      responses:
+        '201':
+          description: Listing created
+          
+  /marketplace/buy:
+    post:
+      tags: [Marketplace]
+      summary: Purchase property/token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listing_id:
+                  type: string
+                quantity:
+                  type: integer
+                payment_method:
+                  type: string
+      responses:
+        '200':
+          description: Purchase initiated
+          
+  /marketplace/transactions:
+    get:
+      tags: [Marketplace]
+      summary: Get transaction history
+      responses:
+        '200':
+          description: Transaction history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                      
+  # ===========================================================================
+  # RENTAL ENDPOINTS
+  # ===========================================================================
+  /rentals/agreements:
+    get:
+      tags: [Rentals]
+      summary: List rental agreements
+      responses:
+        '200':
+          description: Rental agreements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RentalAgreement'
+                  
+    post:
+      tags: [Rentals]
+      summary: Create rental agreement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalAgreement'
+      responses:
+        '201':
+          description: Agreement created
+          
+  /rentals/payments:
+    post:
+      tags: [Rentals]
+      summary: Make rent payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agreement_id:
+                  type: string
+                amount:
+                  type: number
+                payment_method:
+                  type: string
+      responses:
+        '200':
+          description: Payment processed
+          
+  # ===========================================================================
+  # CROWDFUNDING ENDPOINTS
+  # ===========================================================================
+  /crowdfunding/campaigns:
+    get:
+      tags: [Crowdfunding]
+      summary: List crowdfunding campaigns
+      responses:
+        '200':
+          description: Campaigns list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrowdfundingCampaign'
+                  
+    post:
+      tags: [Crowdfunding]
+      summary: Create crowdfunding campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrowdfundingCampaign'
+      responses:
+        '201':
+          description: Campaign created
+          
+  /crowdfunding/invest:
+    post:
+      tags: [Crowdfunding]
+      summary: Invest in campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Investment successful
+          
+  # ===========================================================================
+  # DEFI ENDPOINTS
+  # ===========================================================================
+  /defi/lending/pools:
+    get:
+      tags: [DeFi]
+      summary: Get lending pools
+      responses:
+        '200':
+          description: Lending pools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LendingPool'
+                  
+  /defi/lending/supply:
+    post:
+      tags: [DeFi]
+      summary: Supply assets to lending pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pool_id:
+                  type: string
+                amount:
+                  type: string
+                asset:
+                  type: string
+      responses:
+        '200':
+          description: Supply successful
+          
+  /defi/staking/stake:
+    post:
+      tags: [DeFi]
+      summary: Stake tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: string
+                duration:
+                  type: integer
+      responses:
+        '200':
+          description: Staking successful
+          
+  /defi/staking/positions:
+    get:
+      tags: [DeFi]
+      summary: Get staking positions
+      responses:
+        '200':
+          description: Staking positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StakingPosition'
+                  
+  # ===========================================================================
+  # GOVERNANCE ENDPOINTS
+  # ===========================================================================
+  /governance/proposals:
+    get:
+      tags: [Governance]
+      summary: List governance proposals
+      responses:
+        '200':
+          description: Proposals list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GovernanceProposal'
+                  
+    post:
+      tags: [Governance]
+      summary: Create governance proposal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GovernanceProposal'
+      responses:
+        '201':
+          description: Proposal created
+          
+  /governance/vote:
+    post:
+      tags: [Governance]
+      summary: Vote on proposal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                proposal_id:
+                  type: string
+                vote:
+                  type: string
+                  enum: [for, against, abstain]
+                voting_power:
+                  type: string
+      responses:
+        '200':
+          description: Vote cast
+          
+  # ===========================================================================
+  # AI SERVICE ENDPOINTS
+  # ===========================================================================
+  /ai/chat:
+    post:
+      tags: [AI]
+      summary: AI chatbot conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                session_id:
+                  type: string
+                context:
+                  type: object
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIChatMessage'
+                
+  /ai/recommendations:
+    post:
+      tags: [AI]
+      summary: Get property recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_preferences:
+                  type: object
+                budget:
+                  type: number
+                location:
+                  type: string
+      responses:
+        '200':
+          description: Recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyRecommendation'
+                  
+  /ai/valuation:
+    post:
+      tags: [AI]
+      summary: Get AI property valuation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIValuationRequest'
+      responses:
+        '200':
+          description: Valuation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIValuationResponse'
+                
+  # ===========================================================================
+  # ANALYTICS ENDPOINTS
+  # ===========================================================================
+  /analytics/platform:
+    get:
+      tags: [Analytics]
+      summary: Get platform metrics
+      responses:
+        '200':
+          description: Platform metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformMetrics'
+                
+  /analytics/user:
+    get:
+      tags: [Analytics]
+      summary: Get user analytics
+      responses:
+        '200':
+          description: User analytics
+          
+  # ===========================================================================
+  # WHITE-LABEL ENDPOINTS
+  # ===========================================================================
+  /white-label/config:
+    get:
+      tags: [White-label]
+      summary: Get white-label configuration
+      responses:
+        '200':
+          description: Configuration
+          
+    put:
+      tags: [White-label]
+      summary: Update white-label configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Configuration updated
