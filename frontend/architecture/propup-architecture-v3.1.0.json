@@ -1,0 +1,407 @@
+{
+  "project": "PropUp",
+  "version": "3.1.0",
+  "description": "Decentralized Property Listing & Transaction Platform",
+  "architecture": {
+    "frontend": "React (Create React App)",
+    "backend": "Node.js + Express (External - Not Implemented Here)",
+    "database": "PostgreSQL (External - Not Implemented Here)",
+    "blockchain": "Polygon (Mainnet + Amoy Testnet)",
+    "smart_contracts": "Solidity (Deployed via Toolblox)"
+  },
+  "service_layers": [
+    {
+      "layer_id": 1,
+      "name": "Authentication & Authorization",
+      "description": "Web3 wallet-based authentication with JWT tokens",
+      "endpoints": ["/auth/wallet/connect", "/auth/wallet/disconnect", "/auth/refresh", "/auth/nonce"],
+      "components": ["WalletConnect", "AuthGuard", "WalletButton"],
+      "contracts": []
+    },
+    {
+      "layer_id": 2,
+      "name": "User Management & KYC",
+      "description": "User profiles and KYC verification",
+      "endpoints": ["/users/profile", "/users/{user_id}", "/kyc/initiate", "/kyc/status"],
+      "components": ["UserProfile", "KYCFlow", "KYCStatus"],
+      "contracts": ["ComplianceManager"]
+    },
+    {
+      "layer_id": 3,
+      "name": "Property Registry",
+      "description": "Property listing and management",
+      "endpoints": ["/properties", "/properties/{id}", "/properties/search"],
+      "components": ["PropertyList", "PropertyCard", "PropertyDetails", "PropertyForm"],
+      "contracts": ["PropertyRegistry", "TitleRegistry"]
+    },
+    {
+      "layer_id": 4,
+      "name": "Property Tokenization",
+      "description": "NFT minting and fractional ownership",
+      "endpoints": ["/tokenization/create", "/tokenization/{id}/metadata"],
+      "components": ["TokenizeProperty", "FractionalOwnership", "NFTMetadata"],
+      "contracts": ["PropertyNFT", "FractionalToken"]
+    },
+    {
+      "layer_id": 5,
+      "name": "Marketplace",
+      "description": "Buy/sell tokenized properties",
+      "endpoints": ["/marketplace/listings", "/marketplace/buy", "/marketplace/transactions"],
+      "components": ["MarketplaceList", "BuyProperty", "TransactionHistory"],
+      "contracts": ["Marketplace", "Escrow"]
+    },
+    {
+      "layer_id": 6,
+      "name": "Rental Management",
+      "description": "Rental agreements and payments",
+      "endpoints": ["/rentals/agreements", "/rentals/payments"],
+      "components": ["RentalAgreement", "RentPayment", "RentalDashboard"],
+      "contracts": ["RentalManager", "PaymentSplitter"]
+    },
+    {
+      "layer_id": 7,
+      "name": "Crowdfunding",
+      "description": "Real estate crowdfunding campaigns",
+      "endpoints": ["/crowdfunding/campaigns", "/crowdfunding/invest"],
+      "components": ["CampaignList", "CampaignDetails", "InvestForm"],
+      "contracts": ["Crowdfunding", "CampaignFactory"]
+    },
+    {
+      "layer_id": 8,
+      "name": "DeFi Services",
+      "description": "Lending, borrowing, and staking",
+      "endpoints": ["/defi/lending/pools", "/defi/staking/stake"],
+      "components": ["LendingPool", "StakingDashboard", "YieldOptimizer"],
+      "contracts": ["LendingPool", "Staking", "YieldManager"]
+    },
+    {
+      "layer_id": 9,
+      "name": "Governance",
+      "description": "DAO governance and voting",
+      "endpoints": ["/governance/proposals", "/governance/vote"],
+      "components": ["ProposalList", "VoteCard", "GovernanceDashboard"],
+      "contracts": ["Governor", "Timelock"]
+    },
+    {
+      "layer_id": 10,
+      "name": "Treasury Management",
+      "description": "Platform treasury operations",
+      "endpoints": ["/treasury/balance", "/treasury/allocations"],
+      "components": ["TreasuryDashboard", "AllocationChart"],
+      "contracts": ["Treasury", "VestingVault"]
+    },
+    {
+      "layer_id": 11,
+      "name": "Compliance & Legal",
+      "description": "Legal documents and title registry",
+      "endpoints": ["/compliance/documents", "/compliance/verify"],
+      "components": ["DocumentUpload", "ComplianceStatus", "LegalDocs"],
+      "contracts": ["ComplianceManager", "TitleRegistry"]
+    },
+    {
+      "layer_id": 12,
+      "name": "AI Services",
+      "description": "AI chatbot, recommendations, valuations",
+      "endpoints": ["/ai/chat", "/ai/recommendations", "/ai/valuation"],
+      "components": ["AIChatbot", "PropertyRecommendations", "AIValuation"],
+      "contracts": []
+    },
+    {
+      "layer_id": 13,
+      "name": "Analytics & Reporting",
+      "description": "Platform metrics and KPIs",
+      "endpoints": ["/analytics/platform", "/analytics/user"],
+      "components": ["AnalyticsDashboard", "MetricsChart", "KPICard"],
+      "contracts": []
+    },
+    {
+      "layer_id": 14,
+      "name": "White-label Configuration",
+      "description": "Custom branding and portals",
+      "endpoints": ["/white-label/config"],
+      "components": ["ThemeConfigurator", "BrandingSettings"],
+      "contracts": []
+    },
+    {
+      "layer_id": 15,
+      "name": "Notification & Communication",
+      "description": "Notifications and messaging",
+      "endpoints": ["/notifications", "/messages"],
+      "components": ["NotificationCenter", "MessageInbox"],
+      "contracts": []
+    }
+  ],
+  "smart_contracts": {
+    "phase_1_mvp": [
+      {
+        "name": "PropertyNFT",
+        "standard": "ERC-721/ERC-1155",
+        "description": "Property tokenization as NFTs",
+        "key_functions": ["mint", "transfer", "burn", "tokenURI", "setApprovalForAll"]
+      },
+      {
+        "name": "PropertyRegistry",
+        "standard": "Custom",
+        "description": "Central registry for all properties",
+        "key_functions": ["registerProperty", "updateProperty", "getProperty", "listProperties"]
+      },
+      {
+        "name": "ComplianceManager",
+        "standard": "Custom",
+        "description": "KYC/AML compliance management",
+        "key_functions": ["verifyKYC", "checkCompliance", "addToWhitelist", "removeFromWhitelist"]
+      },
+      {
+        "name": "TitleRegistry",
+        "standard": "Custom",
+        "description": "Immutable title and legal document registry",
+        "key_functions": ["registerTitle", "transferTitle", "getTitle", "verifyOwnership"]
+      }
+    ],
+    "phase_2_post_mvp": [
+      {
+        "name": "Marketplace",
+        "description": "Decentralized marketplace for property tokens"
+      },
+      {
+        "name": "Escrow",
+        "description": "Smart contract-based escrow"
+      },
+      {
+        "name": "RentalManager",
+        "description": "Automated rental agreements"
+      },
+      {
+        "name": "PaymentSplitter",
+        "description": "Revenue distribution to stakeholders"
+      },
+      {
+        "name": "InvestmentToken",
+        "standard": "ERC-20",
+        "description": "Fractional ownership tokens"
+      },
+      {
+        "name": "Crowdfunding",
+        "description": "Real estate crowdfunding campaigns"
+      },
+      {
+        "name": "LendingPool",
+        "description": "DeFi lending against property tokens"
+      },
+      {
+        "name": "Staking",
+        "description": "PUT token staking for rewards"
+      },
+      {
+        "name": "Governor",
+        "standard": "OpenZeppelin Governor",
+        "description": "DAO governance contract"
+      },
+      {
+        "name": "Timelock",
+        "description": "Timelock controller for governance"
+      },
+      {
+        "name": "Treasury",
+        "description": "Platform treasury management"
+      },
+      {
+        "name": "YieldManager",
+        "description": "Yield optimization strategies"
+      }
+    ]
+  },
+  "routes": {
+    "public": [
+      {
+        "path": "/",
+        "component": "LandingPage",
+        "description": "Public landing page with property search"
+      },
+      {
+        "path": "/properties",
+        "component": "PropertyListPage",
+        "description": "Browse all properties"
+      },
+      {
+        "path": "/properties/:id",
+        "component": "PropertyDetailPage",
+        "description": "Property detail page"
+      },
+      {
+        "path": "/marketplace",
+        "component": "MarketplacePage",
+        "description": "Marketplace listings"
+      },
+      {
+        "path": "/about",
+        "component": "AboutPage",
+        "description": "About PropUp"
+      }
+    ],
+    "authenticated": [
+      {
+        "path": "/dashboard",
+        "component": "DashboardPage",
+        "description": "User dashboard (role-based)",
+        "roles": ["all"]
+      },
+      {
+        "path": "/portfolio",
+        "component": "PortfolioPage",
+        "description": "User portfolio",
+        "roles": ["investor"]
+      },
+      {
+        "path": "/profile",
+        "component": "ProfilePage",
+        "description": "User profile settings",
+        "roles": ["all"]
+      },
+      {
+        "path": "/kyc",
+        "component": "KYCPage",
+        "description": "KYC verification",
+        "roles": ["all"]
+      }
+    ],
+    "portals": [
+      {
+        "path": "/investor",
+        "component": "InvestorPortal",
+        "role": "investor"
+      },
+      {
+        "path": "/agent",
+        "component": "AgentPortal",
+        "role": "agent"
+      },
+      {
+        "path": "/developer",
+        "component": "DeveloperPortal",
+        "role": "developer"
+      },
+      {
+        "path": "/lawyer",
+        "component": "LawyerPortal",
+        "role": "lawyer"
+      },
+      {
+        "path": "/property-manager",
+        "component": "PropertyManagerPortal",
+        "role": "manager"
+      },
+      {
+        "path": "/tenant",
+        "component": "TenantPortal",
+        "role": "tenant"
+      }
+    ]
+  },
+  "state_management": {
+    "approach": "React Context + Custom Hooks",
+    "contexts": [
+      {
+        "name": "AuthContext",
+        "state": ["user", "isAuthenticated", "accessToken", "walletAddress"],
+        "actions": ["login", "logout", "refreshToken", "updateProfile"]
+      },
+      {
+        "name": "Web3Context",
+        "state": ["provider", "signer", "chainId", "isConnected", "balance"],
+        "actions": ["connect", "disconnect", "switchChain", "signMessage"]
+      },
+      {
+        "name": "PropertyContext",
+        "state": ["properties", "selectedProperty", "filters", "loading"],
+        "actions": ["fetchProperties", "selectProperty", "updateFilters", "searchProperties"]
+      },
+      {
+        "name": "MarketplaceContext",
+        "state": ["listings", "transactions", "cart"],
+        "actions": ["fetchListings", "buyProperty", "createListing"]
+      },
+      {
+        "name": "AIContext",
+        "state": ["chatHistory", "recommendations", "isProcessing"],
+        "actions": ["sendMessage", "getRecommendations", "getValuation"]
+      }
+    ]
+  },
+  "component_tree": {
+    "App": {
+      "Providers": {
+        "RainbowKitProvider": {
+          "WagmiProvider": {
+            "QueryClientProvider": {
+              "AuthProvider": {
+                "Router": {
+                  "Layout": {
+                    "Header": ["Logo", "Navigation", "WalletButton", "UserMenu"],
+                    "Main": ["Routes"],
+                    "Footer": ["Links", "Social", "Legal"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "integrations": {
+    "blockchain": {
+      "wallet_support": ["MetaMask", "WalletConnect", "Coinbase Wallet", "Rainbow"],
+      "networks": ["Polygon Mainnet (137)", "Polygon Amoy Testnet (80002)"],
+      "rpc_providers": ["Alchemy", "Infura", "QuickNode"]
+    },
+    "ai": {
+      "llm_providers": ["OpenAI GPT-4/5", "Anthropic Claude Sonnet 4.5", "Google Gemini 2.5 Pro"],
+      "vector_db": "Pinecone",
+      "framework": "LangChain"
+    },
+    "kyc": {
+      "providers": ["Sumsub", "Onfido"],
+      "aml_screening": "Chainalysis"
+    },
+    "storage": {
+      "decentralized": ["IPFS", "Pinata", "Filecoin"],
+      "centralized": "AWS S3 / Google Cloud Storage"
+    },
+    "payments": {
+      "fiat_onramp": ["Stripe", "Transak", "MoonPay"]
+    },
+    "maps": {
+      "providers": ["Mapbox", "Google Maps"]
+    },
+    "search": {
+      "providers": ["Algolia", "Elasticsearch"]
+    },
+    "analytics": {
+      "providers": ["Mixpanel", "Google Analytics", "Datadog"]
+    },
+    "error_tracking": {
+      "providers": ["Sentry", "LogRocket"]
+    }
+  },
+  "authentication_flow": {
+    "steps": [
+      "User clicks 'Connect Wallet'",
+      "RainbowKit modal opens with wallet options",
+      "User selects wallet and approves connection",
+      "Frontend requests nonce from backend",
+      "User signs message with wallet",
+      "Frontend sends signature to backend for verification",
+      "Backend verifies signature and issues JWT",
+      "Frontend stores JWT and wallet address",
+      "User is authenticated"
+    ]
+  },
+  "deployment": {
+    "frontend": "Vercel / Netlify",
+    "backend": "AWS / Google Cloud / Azure",
+    "database": "PostgreSQL (Managed)",
+    "smart_contracts": "Polygon via Toolblox",
+    "ipfs": "Pinata / Infura"
+  }
+}
