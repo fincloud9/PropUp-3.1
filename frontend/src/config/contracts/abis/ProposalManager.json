@@ -1,0 +1,74 @@
+[
+  {
+    "type": "function",
+    "name": "createProposal",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "title", "type": "string"},
+      {"name": "description", "type": "string"},
+      {"name": "targets", "type": "address[]"},
+      {"name": "values", "type": "uint256[]"},
+      {"name": "calldatas", "type": "bytes[]"}
+    ],
+    "outputs": [{"name": "proposalId", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "cancelProposal",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "proposalId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "queueProposal",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "proposalId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "executeProposal",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "proposalId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getProposal",
+    "stateMutability": "view",
+    "inputs": [{"name": "proposalId", "type": "uint256"}],
+    "outputs": [
+      {
+        "name": "proposal",
+        "type": "tuple",
+        "components": [
+          {"name": "proposer", "type": "address"},
+          {"name": "title", "type": "string"},
+          {"name": "description", "type": "string"},
+          {"name": "votingStarts", "type": "uint256"},
+          {"name": "votingEnds", "type": "uint256"},
+          {"name": "status", "type": "uint8"},
+          {"name": "forVotes", "type": "uint256"},
+          {"name": "againstVotes", "type": "uint256"},
+          {"name": "abstainVotes", "type": "uint256"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalCreated",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256", "indexed": true},
+      {"name": "proposer", "type": "address", "indexed": true}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalExecuted",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256", "indexed": true}
+    ]
+  }
+]

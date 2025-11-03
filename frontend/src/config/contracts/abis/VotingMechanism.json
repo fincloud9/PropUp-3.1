@@ -1,0 +1,71 @@
+[
+  {
+    "type": "function",
+    "name": "castVote",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "support", "type": "uint8"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "castVoteWithReason",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "support", "type": "uint8"},
+      {"name": "reason", "type": "string"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "hasVoted",
+    "stateMutability": "view",
+    "inputs": [
+      {"name": "proposalId", "type": "uint256"},
+      {"name": "voter", "type": "address"}
+    ],
+    "outputs": [{"name": "voted", "type": "bool"}]
+  },
+  {
+    "type": "function",
+    "name": "getVoteTally",
+    "stateMutability": "view",
+    "inputs": [{"name": "proposalId", "type": "uint256"}],
+    "outputs": [
+      {"name": "forVotes", "type": "uint256"},
+      {"name": "againstVotes", "type": "uint256"},
+      {"name": "abstainVotes", "type": "uint256"}
+    ]
+  },
+  {
+    "type": "function",
+    "name": "calculateVoteWeight",
+    "stateMutability": "view",
+    "inputs": [
+      {"name": "voter", "type": "address"},
+      {"name": "rawVotingPower", "type": "uint256"}
+    ],
+    "outputs": [{"name": "weight", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "enableQuadraticVoting",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "enabled", "type": "bool"}],
+    "outputs": []
+  },
+  {
+    "type": "event",
+    "name": "VoteCast",
+    "inputs": [
+      {"name": "voter", "type": "address", "indexed": true},
+      {"name": "proposalId", "type": "uint256", "indexed": true},
+      {"name": "support", "type": "uint8", "indexed": false},
+      {"name": "weight", "type": "uint256", "indexed": false}
+    ]
+  }
+]
