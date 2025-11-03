@@ -1,0 +1,91 @@
+[
+  {
+    "type": "function",
+    "name": "raiseDispute",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256"},
+      {"name": "stakeId", "type": "uint256"},
+      {"name": "reason", "type": "string"},
+      {"name": "evidence", "type": "string[]"}
+    ],
+    "outputs": [{"name": "disputeId", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "submitEvidence",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256"},
+      {"name": "evidence", "type": "string"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "resolveDispute",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256"},
+      {"name": "decision", "type": "uint8"},
+      {"name": "refundAmount", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "appealDecision",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256"},
+      {"name": "reason", "type": "string"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getDispute",
+    "stateMutability": "view",
+    "inputs": [{"name": "disputeId", "type": "uint256"}],
+    "outputs": [
+      {
+        "name": "dispute",
+        "type": "tuple",
+        "components": [
+          {"name": "escrowId", "type": "uint256"},
+          {"name": "stakeId", "type": "uint256"},
+          {"name": "complainant", "type": "address"},
+          {"name": "respondent", "type": "address"},
+          {"name": "reason", "type": "string"},
+          {"name": "status", "type": "uint8"},
+          {"name": "arbitrator", "type": "address"},
+          {"name": "decision", "type": "uint8"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "DisputeRaised",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256", "indexed": true},
+      {"name": "escrowId", "type": "uint256", "indexed": true},
+      {"name": "complainant", "type": "address", "indexed": true}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "DisputeResolved",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256", "indexed": true},
+      {"name": "decision", "type": "uint8", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "DisputeAppealed",
+    "inputs": [
+      {"name": "disputeId", "type": "uint256", "indexed": true}
+    ]
+  }
+]

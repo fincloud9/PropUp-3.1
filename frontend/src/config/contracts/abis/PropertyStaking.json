@@ -1,0 +1,95 @@
+[
+  {
+    "type": "function",
+    "name": "stakeForAccess",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "propertyId", "type": "uint256"},
+      {"name": "amount", "type": "uint256"},
+      {"name": "stakePeriod", "type": "uint256"},
+      {"name": "autoExtend", "type": "bool"}
+    ],
+    "outputs": [{"name": "stakeId", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "unstake",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "stakeId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "extendStake",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256"},
+      {"name": "additionalPeriod", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "calculateYield",
+    "stateMutability": "view",
+    "inputs": [{"name": "stakeId", "type": "uint256"}],
+    "outputs": [{"name": "yieldAmount", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "getStake",
+    "stateMutability": "view",
+    "inputs": [{"name": "stakeId", "type": "uint256"}],
+    "outputs": [
+      {
+        "name": "stake",
+        "type": "tuple",
+        "components": [
+          {"name": "propertyId", "type": "uint256"},
+          {"name": "staker", "type": "address"},
+          {"name": "amount", "type": "uint256"},
+          {"name": "startTime", "type": "uint256"},
+          {"name": "endTime", "type": "uint256"},
+          {"name": "yieldRate", "type": "uint256"},
+          {"name": "isActive", "type": "bool"},
+          {"name": "autoExtend", "type": "bool"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getUserStakes",
+    "stateMutability": "view",
+    "inputs": [{"name": "user", "type": "address"}],
+    "outputs": [{"name": "stakeIds", "type": "uint256[]"}]
+  },
+  {
+    "type": "event",
+    "name": "Staked",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256", "indexed": true},
+      {"name": "staker", "type": "address", "indexed": true},
+      {"name": "propertyId", "type": "uint256", "indexed": true},
+      {"name": "amount", "type": "uint256", "indexed": false},
+      {"name": "stakePeriod", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "Unstaked",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256", "indexed": true},
+      {"name": "staker", "type": "address", "indexed": true},
+      {"name": "amount", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "StakeExtended",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256", "indexed": true},
+      {"name": "newEndTime", "type": "uint256", "indexed": false}
+    ]
+  }
+]

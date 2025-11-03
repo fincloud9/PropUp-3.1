@@ -1,0 +1,105 @@
+[
+  {
+    "type": "function",
+    "name": "createEscrow",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256"},
+      {"name": "staker", "type": "address"},
+      {"name": "owner", "type": "address"},
+      {"name": "totalAmount", "type": "uint256"},
+      {"name": "releaseTime", "type": "uint256"}
+    ],
+    "outputs": [{"name": "escrowId", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "releaseEscrow",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256"},
+      {"name": "yieldAmount", "type": "uint256"},
+      {"name": "principalAmount", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "refundEscrow",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256"},
+      {"name": "refundAmount", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "freezeEscrow",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "escrowId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "unfreezeEscrow",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "escrowId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getEscrow",
+    "stateMutability": "view",
+    "inputs": [{"name": "escrowId", "type": "uint256"}],
+    "outputs": [
+      {
+        "name": "escrow",
+        "type": "tuple",
+        "components": [
+          {"name": "stakeId", "type": "uint256"},
+          {"name": "staker", "type": "address"},
+          {"name": "owner", "type": "address"},
+          {"name": "totalAmount", "type": "uint256"},
+          {"name": "yieldAmount", "type": "uint256"},
+          {"name": "principalAmount", "type": "uint256"},
+          {"name": "releaseTime", "type": "uint256"},
+          {"name": "status", "type": "uint8"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "EscrowCreated",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256", "indexed": true},
+      {"name": "stakeId", "type": "uint256", "indexed": true},
+      {"name": "totalAmount", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "EscrowReleased",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256", "indexed": true},
+      {"name": "yieldAmount", "type": "uint256", "indexed": false},
+      {"name": "principalAmount", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "EscrowRefunded",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256", "indexed": true},
+      {"name": "refundAmount", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "EscrowFrozen",
+    "inputs": [
+      {"name": "escrowId", "type": "uint256", "indexed": true}
+    ]
+  }
+]

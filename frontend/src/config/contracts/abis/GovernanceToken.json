@@ -1,0 +1,71 @@
+[
+  {
+    "type": "function",
+    "name": "mint",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "to", "type": "address"},
+      {"name": "amount", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "burn",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "from", "type": "address"},
+      {"name": "amount", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "delegate",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "delegatee", "type": "address"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getVotingPower",
+    "stateMutability": "view",
+    "inputs": [{"name": "account", "type": "address"}],
+    "outputs": [{"name": "power", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "getPriorVotes",
+    "stateMutability": "view",
+    "inputs": [
+      {"name": "account", "type": "address"},
+      {"name": "blockNumber", "type": "uint256"}
+    ],
+    "outputs": [{"name": "votes", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "calculateStakingMultiplier",
+    "stateMutability": "pure",
+    "inputs": [{"name": "stakeDuration", "type": "uint256"}],
+    "outputs": [{"name": "multiplier", "type": "uint256"}]
+  },
+  {
+    "type": "event",
+    "name": "DelegateChanged",
+    "inputs": [
+      {"name": "delegator", "type": "address", "indexed": true},
+      {"name": "fromDelegate", "type": "address", "indexed": true},
+      {"name": "toDelegate", "type": "address", "indexed": true}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "DelegateVotesChanged",
+    "inputs": [
+      {"name": "delegate", "type": "address", "indexed": true},
+      {"name": "previousBalance", "type": "uint256", "indexed": false},
+      {"name": "newBalance", "type": "uint256", "indexed": false}
+    ]
+  }
+]

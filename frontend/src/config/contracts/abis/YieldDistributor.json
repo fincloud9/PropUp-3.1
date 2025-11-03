@@ -1,0 +1,63 @@
+[
+  {
+    "type": "function",
+    "name": "distributeYield",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "stakeId", "type": "uint256"}],
+    "outputs": [{"name": "distributedAmount", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "claimYield",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "propertyId", "type": "uint256"}],
+    "outputs": [{"name": "claimedAmount", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "calculateOwnerYield",
+    "stateMutability": "view",
+    "inputs": [
+      {"name": "propertyId", "type": "uint256"},
+      {"name": "stakeId", "type": "uint256"}
+    ],
+    "outputs": [{"name": "netYield", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "setFees",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "platformFee", "type": "uint256"},
+      {"name": "agencyFee", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getPendingYield",
+    "stateMutability": "view",
+    "inputs": [{"name": "propertyId", "type": "uint256"}],
+    "outputs": [{"name": "pendingAmount", "type": "uint256"}]
+  },
+  {
+    "type": "event",
+    "name": "YieldDistributed",
+    "inputs": [
+      {"name": "stakeId", "type": "uint256", "indexed": true},
+      {"name": "propertyOwner", "type": "address", "indexed": true},
+      {"name": "amount", "type": "uint256", "indexed": false},
+      {"name": "platformFee", "type": "uint256", "indexed": false},
+      {"name": "agencyFee", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "YieldClaimed",
+    "inputs": [
+      {"name": "propertyId", "type": "uint256", "indexed": true},
+      {"name": "owner", "type": "address", "indexed": true},
+      {"name": "amount", "type": "uint256", "indexed": false}
+    ]
+  }
+]

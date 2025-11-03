@@ -1,0 +1,95 @@
+[
+  {
+    "type": "function",
+    "name": "mintAccessNFT",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "to", "type": "address"},
+      {"name": "propertyId", "type": "uint256"},
+      {"name": "stakeId", "type": "uint256"},
+      {"name": "startTime", "type": "uint256"},
+      {"name": "endTime", "type": "uint256"},
+      {"name": "isTransferable", "type": "bool"}
+    ],
+    "outputs": [{"name": "tokenId", "type": "uint256"}]
+  },
+  {
+    "type": "function",
+    "name": "burnAccessNFT",
+    "stateMutability": "nonpayable",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "validateAccess",
+    "stateMutability": "view",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "isValid", "type": "bool"}]
+  },
+  {
+    "type": "function",
+    "name": "transferAccess",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      {"name": "from", "type": "address"},
+      {"name": "to", "type": "address"},
+      {"name": "tokenId", "type": "uint256"}
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getAccessRights",
+    "stateMutability": "view",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [
+      {
+        "name": "accessRights",
+        "type": "tuple",
+        "components": [
+          {"name": "propertyId", "type": "uint256"},
+          {"name": "stakeId", "type": "uint256"},
+          {"name": "holder", "type": "address"},
+          {"name": "startTime", "type": "uint256"},
+          {"name": "endTime", "type": "uint256"},
+          {"name": "isTransferable", "type": "bool"},
+          {"name": "isActive", "type": "bool"}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "tokenURI",
+    "stateMutability": "view",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "uri", "type": "string"}]
+  },
+  {
+    "type": "event",
+    "name": "AccessGranted",
+    "inputs": [
+      {"name": "tokenId", "type": "uint256", "indexed": true},
+      {"name": "holder", "type": "address", "indexed": true},
+      {"name": "propertyId", "type": "uint256", "indexed": true},
+      {"name": "endTime", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "AccessRevoked",
+    "inputs": [
+      {"name": "tokenId", "type": "uint256", "indexed": true}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "AccessTransferred",
+    "inputs": [
+      {"name": "tokenId", "type": "uint256", "indexed": true},
+      {"name": "from", "type": "address", "indexed": true},
+      {"name": "to", "type": "address", "indexed": true}
+    ]
+  }
+]
